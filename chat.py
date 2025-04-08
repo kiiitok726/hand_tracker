@@ -3,15 +3,16 @@ import mediapipe as mp
 import pyautogui
 import math
 
-
+# booleans to set scrolling modes
 scroll_up = False
 scroll_down = False
 
+# simple math distance formula to detect finger proximity
 def distance(coords1, coords2):
     return math.sqrt((coords1[0]-coords2[0])**2 + (coords1[1]-coords2[1])**2)
 
 
-# Initialize MediaPipe Hands for up to 2 hands.
+# initialize the media pipe hands
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(
     static_image_mode=False,
@@ -27,6 +28,11 @@ try:
 except:
     print("Wrong camera")
 
+cv2.namedWindow("Hand Tracking", cv2.WND_PROP_FULLSCREEN)
+cv2.setWindowProperty("Hand Tracking", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+
+
+
 
 while cap.isOpened():
     ret, frame = cap.read()
@@ -35,7 +41,8 @@ while cap.isOpened():
 
     # Flip the frame horizontally for a mirror view.
     frame = cv2.flip(frame, 1)
-    h, w, c = frame.shape
+    # h, w, c = frame.shape
+    w, h = pyautogui.size()
 
     # Convert the BGR image to RGB.
     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
