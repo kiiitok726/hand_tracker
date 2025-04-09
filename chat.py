@@ -10,7 +10,7 @@ scroll_down = False
 # simple math distance formula to detect finger proximity
 def distance(coords1, coords2):
     return math.sqrt((coords1[0]-coords2[0])**2 + (coords1[1]-coords2[1])**2)
-
+ 
 
 # initialize the media pipe hands
 mp_hands = mp.solutions.hands
