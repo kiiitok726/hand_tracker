@@ -1,9 +1,9 @@
 Voice activated, hand tracking cursor program
 
-WHAT A 
+WHAT A program that listens for a specific wake word, then turns on a camera to detect your hand movement and replace your cursor with it.
 
-WHEN February 2025
+WHEN April 2025
 
-WHO Kaito Kanazawa with inspiration from Jack Thiel
+WHO Kaito Kanazawa with inspiration from Iron Man
 
 WHY AT CS Major
