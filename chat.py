@@ -3,6 +3,12 @@ import mediapipe as mp
 import pyautogui
 import math
 
+import whisper
+import sounddevice as sd
+import numpy as np
+import scipy.io.wavfile as wav
+
+
 # booleans to set scrolling modes
 scroll_up = False
 scroll_down = False
