@@ -30,7 +30,7 @@ mp_drawing = mp.solutions.drawing_utils
 
 # Start capturing video from the webcam.
 try:
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
 except:
     print("Wrong camera")
 
@@ -81,10 +81,10 @@ while cap.isOpened():
             cv2.circle(frame, palm_coords, 10, (0, 255, 0), -1)
 
             # Draw a circle (node) at each finger tip.
-            cv2.circle(frame, thumb_coords, 5, (0, 255, 0), -1)
-            cv2.circle(frame, index_coords, 5, (0, 255, 0), -1)
-            cv2.circle(frame, middle_coords, 5, (0, 255, 0), -1)
-            cv2.circle(frame, ring_coords, 5, (0, 255, 0), -1)
+            cv2.circle(frame, thumb_coords *w, 5, (0, 255, 0), -1)
+            cv2.circle(frame, index_coords *w, 5, (0, 255, 0), -1)
+            cv2.circle(frame, middle_coords *w, 5, (0, 255, 0), -1)
+            cv2.circle(frame, ring_coords *w, 5, (0, 255, 0), -1)
 
             ## Draw lines connecting thumb to index and index to middle.
             # cv2.line(frame, thumb_coords, index_coords, (255, 0, 0), 2)

@@ -27,7 +27,7 @@ def detect_wake_word(audio):
 
     print(f"Transcribed Text: {transcription}", flush=True)
     
-    return "wake" in transcription
+    return "actually" in transcription
 
 def your_function():
     print("Wake word detected! Running your function...", flush=True)
