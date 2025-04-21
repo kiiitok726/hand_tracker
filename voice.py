@@ -14,7 +14,7 @@ model = whisper.load_model("tiny.en")
 def record_audio(duration=3, fs=16000):
     print("Recording...", flush=True)
     recording = sd.rec(int(duration * fs), samplerate=fs, channels=1, dtype='float32')
-    # sd.wait()  # Wait until recording finishes
+    sd.wait()  # Wait until recording finishes
     print("Recording complete.", flush=True)
     return recording.flatten()
 
@@ -52,7 +52,7 @@ def your_function():
 
     # Start capturing video from the webcam.
     try:
-        cap = cv2.VideoCapture(1)
+        cap = cv2.VideoCapture(0)
     except:
         print("Wrong camera")
 
