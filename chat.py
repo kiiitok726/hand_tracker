@@ -4,6 +4,10 @@ import pyautogui
 import math
 import time
 import subprocess
+import threading
+import sounddevice as sd
+import numpy as np
+import scipy.io.wavfile as wav
 
 
 # booleans to set scrolling modes
@@ -11,10 +15,28 @@ scroll_up = False
 scroll_down = False
 clicking = False
 ssing = False
+# recording = False
+recording = threading.Event()
 
 # simple math distance formula to detect finger proximity
 def distance(coords1, coords2):
     return math.sqrt((coords1[0]-coords2[0])**2 + (coords1[1]-coords2[1])**2)
+
+# record audio until "trigger" is triggered
+def record_audio_on_event(trigger, filename="output.wav"):
+    recorded = []
+
+    def callback(indata, frames, time_info, status):
+        recorded.append(indata.copy())
+
+    with sd.InputStream(samplerate=44100, channels=1, callback=callback):
+        while trigger.is_set():  # Keep recording while the flag is True
+            sd.sleep(100)
+
+    audio = np.concatenate(recorded, axis=0)
+    audio = np.int16(audio * 32767)
+    wav.write(filename, 44100, audio)
+    print(f"[Audio saved as {filename}]")
  
 
 # initialize the media pipe hands (up to 2 hands)
@@ -34,10 +56,24 @@ mp_drawing = mp.solutions.drawing_utils
 #     cap = cv2.VideoCapture(0)
 #     print("Camera 0 Activated")
 
-for i in range(2):
-    cap = cv2.VideoCapture(i)
-    if cap.isOpened():
-        break
+# for camera_index in range(3):  # Try indices 0, 1, and 2
+#         print(f"Trying to open camera with index {camera_index}...")
+#         cap = cv2.VideoCapture(camera_index)
+        
+#         if not cap.isOpened():
+#             print(f"Failed to open camera with index {camera_index}.")
+#             continue
+            
+#         # Check if we can actually read from the camera
+#         success, test_frame = cap.read()
+#         if not success:
+#             print(f"Camera opened but failed to read frame from index {camera_index}.")
+#             cap.release()
+#             continue
+            
+#         print(f"Successfully connected to camera with index {camera_index}")
+
+cap = cv2.VideoCapture(1)
 
 # # Set camera window properties to full screen
 # cv2.namedWindow("Hand Tracking", cv2.WND_PROP_FULLSCREEN)
@@ -103,19 +139,27 @@ while cap.isOpened():
             # DETECTIONS -------------------------------------------------------------------------
 
             # Check for scroll
-            if distance(index_coords, middle_coords) < 40:
+            if distance(index_coords, middle_coords) < 38:
                 scroll_up = True
-            elif distance(middle_coords, ring_coords) < 40:
+            elif distance(middle_coords, ring_coords) < 38:
                 scroll_down = True
             
             # Check for click
-            if distance(middle_coords, thumb_coords) < 40:
+            if distance(middle_coords, thumb_coords) < 38:
                 clicking = True
 
             # Check for ss
             if distance(ring_coords, palm_coords) < 25:
                 ssing = True
-                
+
+            # Check for recording
+            if distance(thumb_coords, palm_coords) < 60 and not recording.is_set():
+                recording.set()
+                threading.Thread(target=record_audio_on_event, args=(recording, ), daemon=True).start()
+                print("Recording started...")
+            elif not distance(thumb_coords, palm_coords) < 60 and recording.is_set():
+                recording.clear()
+                print("Recording complete.")
 
             # EXECUTIONS --------------------------------------------------------------------------
 
@@ -140,6 +184,10 @@ while cap.isOpened():
                 pyautogui.screenshot(f"Hand Track Cam - {time.asctime()}")
                 subprocess.run(["screencapture", f"/Users/kaito/Desktop/Hand Track Cam - {time.asctime()}.png"])
                 color = (0, 255, 255)
+
+            # Recording
+            if recording.is_set():
+                color = (255, 0, 255)
             
 
             # DRAWINGS ----------------------------------------------------------------------------
